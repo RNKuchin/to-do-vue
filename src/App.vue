@@ -1,47 +1,119 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+  <div class="wrapper">
+    <h1>{{ titlePage }}</h1>
+    <div class="input-wrapper">
+      <input
+        type="text"
+        name="inputTodo"
+        :placeholder="inputPlaceholder"
+        id="inputTodo"
+        v-model.trim="inputText"
+        @keyup.enter="addInputText"
+      />
+      <button type="button" @click="addInputText">
+        <BtnInputAdd />
+      </button>
     </div>
-  </header>
 
-  <main>
-    <TheWelcome />
-  </main>
+    <h2>{{ activeTasks.length ? titleActiveToDo : notTitleActiveToDo }}</h2>
+    <ul class="todo-list" v-if="activeTasks.length">
+      <li class="todo-item" v-for="item in activeTasks" :key="item.id" :id="'id-item-' + item.id">
+        {{ item.text }}
+        <div class="btn-group">
+          <button type="button" class="btn-done" @click="doneTodoItem(item.id)">
+            <BtnDone />
+          </button>
+          <button type="button" class="btn-remove" @click="removeItemToDo(item.id)">
+            <BtnRemove />
+          </button>
+        </div>
+      </li>
+    </ul>
+
+    <h2 v-if="completedTasks.length">{{ titleDoneToDo }}</h2>
+    <ul class="todo-list" v-if="completedTasks.length">
+      <li
+        class="todo-item"
+        :class="completedTasks.length ? 'done' : ''"
+        v-for="item in completedTasks"
+        :key="item.id"
+        :id="'id-item-' + item.id"
+      >
+        {{ item.text }}
+        <div class="btn-group">
+          <button type="button" class="btn-done" @click="doneTodoItem(item.id)">
+            <BtnUndo />
+          </button>
+          <button type="button" class="btn-remove" @click="removeItemToDo(item.id)">
+            <BtnRemove />
+          </button>
+        </div>
+      </li>
+    </ul>
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
+<script>
+import BtnDone from './components/BtnDone.vue'
+import BtnInputAdd from './components/BtnInputAdd.vue'
+import BtnRemove from './components/BtnRemove.vue'
+import BtnUndo from './components/BtnUndo.vue'
+export default {
+  components: { BtnDone, BtnRemove, BtnInputAdd, BtnUndo },
+  name: 'App',
+  created() {
+    const savedTasks = localStorage.getItem('tasks')
+    if (savedTasks) {
+      this.dataItemsToDo = JSON.parse(savedTasks)
+    }
+  },
+  data() {
+    return {
+      titlePage: 'To Do App',
+      titleActiveToDo: 'Активные задачи',
+      notTitleActiveToDo: 'Активных задач нет',
+      titleDoneToDo: 'Выполненые задачи',
+      inputText: '',
+      inputPlaceholder: 'Введите текст для заметки...',
+      dataItemsToDo: [],
+    }
+  },
+  methods: {
+    saveToLocalStorage() {
+      localStorage.setItem('tasks', JSON.stringify(this.dataItemsToDo))
+    },
+    addInputText() {
+      if (this.inputText != '') {
+        this.dataItemsToDo.push({
+          text: this.inputText,
+          id: this.dataItemsToDo.length + 1,
+          completed: false,
+        })
+        this.inputText = ''
+        this.saveToLocalStorage()
+      }
+    },
+    removeItemToDo(id) {
+      this.dataItemsToDo = this.dataItemsToDo.filter((item) => item.id !== id)
+      this.saveToLocalStorage()
+    },
+    doneTodoItem(id) {
+      const item = this.dataItemsToDo.find((item) => item.id === id)
+      if (item) {
+        item.completed = !item.completed
+        this.saveToLocalStorage()
+      }
+    },
+  },
+  computed: {
+    activeTasks() {
+      return this.dataItemsToDo.filter((item) => !item.completed)
+    },
+    completedTasks() {
+      return this.dataItemsToDo.filter((item) => item.completed)
+    },
+  },
 }
+</script>
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>
+<style src="./assets/styles.css"></style>
