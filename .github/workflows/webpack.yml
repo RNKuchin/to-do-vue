@@ -25,9 +25,6 @@ jobs:
     - name: Build
       run: |
         npm install
-        npm run build
+        npm run dev
 
-        - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./dist
+
