@@ -10,7 +10,7 @@
         v-model.trim="inputText"
         @keyup.enter="addInputText"
       />
-      <button type="button" @click="addInputText">
+      <button type="button" @click="addInputText" title="Добавить задачу">
         <BtnInputAdd />
       </button>
     </div>
@@ -20,10 +20,20 @@
       <li class="todo-item" v-for="item in activeTasks" :key="item.id" :id="'id-item-' + item.id">
         {{ item.text }}
         <div class="btn-group">
-          <button type="button" class="btn-done" @click="doneTodoItem(item.id)">
+          <button
+            type="button"
+            class="btn-done"
+            @click="doneTodoItem(item.id)"
+            title="Завершить задачу"
+          >
             <BtnDone />
           </button>
-          <button type="button" class="btn-remove" @click="removeItemToDo(item.id)">
+          <button
+            type="button"
+            class="btn-remove"
+            @click="removeItemToDo(item.id)"
+            title="Удалить задачу"
+          >
             <BtnRemove />
           </button>
         </div>
@@ -41,10 +51,20 @@
       >
         {{ item.text }}
         <div class="btn-group">
-          <button type="button" class="btn-done" @click="doneTodoItem(item.id)">
+          <button
+            type="button"
+            class="btn-done"
+            @click="doneTodoItem(item.id)"
+            title="Вернуть задачу"
+          >
             <BtnUndo />
           </button>
-          <button type="button" class="btn-remove" @click="removeItemToDo(item.id)">
+          <button
+            type="button"
+            class="btn-remove"
+            @click="removeItemToDo(item.id)"
+            title="Удалить задачу"
+          >
             <BtnRemove />
           </button>
         </div>
@@ -69,12 +89,12 @@ export default {
   },
   data() {
     return {
-      titlePage: 'To Do App',
+      titlePage: 'Список задач',
       titleActiveToDo: 'Активные задачи',
       notTitleActiveToDo: 'Активных задач нет',
       titleDoneToDo: 'Выполненые задачи',
       inputText: '',
-      inputPlaceholder: 'Введите текст для заметки...',
+      inputPlaceholder: 'Описание новой задачи...',
       dataItemsToDo: [],
     }
   },
